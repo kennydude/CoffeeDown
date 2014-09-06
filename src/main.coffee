@@ -1,6 +1,8 @@
 CoffeeDoc = require "./CoffeeDoc"
 Iterator = require "./Iterator" # TODO: Move to ext module
 ansi = require "ansi"
+fs = require "fs"
+path = require "path"
 cursor_error = ansi(process.stderr)
 cursor = ansi(process.stdout)
 
@@ -24,7 +26,10 @@ console.info = (msg) ->
 if command
 
     files = []
-    options = {}
+    options = {
+        markdown_template : path.join __dirname, "template.md"
+    }
+
     args = new Iterator ( args.slice(1) )
 
     while (arg = args.next()) != null
@@ -33,35 +38,50 @@ if command
                 options.markdown = args.next()
             when "-j", "--json", "-json"
                 option.json = args.next()
+            when "-mt", "--markdownTemplate", "-markdownTemplate"
+                options.markdown_template = args.next()
             else
                 files.push arg
+
+data = {}
+addData = (d) ->
+    for key, value of d
+        if Array.isArray value
+            if !data[key]
+                data[key] = []
+            for item in value
+                data[key].push item
+        else
+            console.warn "Unknown Error: #{k} is invalid"
+
+doData = () ->
+    console.info "Finishing processing"
+    if options.markdown
+        console.info "Outputting Markdown to #{options.markdown}"
+        swig = require "swig"
+
+        # This is to do bullet lists
+        swig.setFilter "indentNL", (input) ->
+            lines = input.split("\n")
+            return lines[0] + "\n  #{line}" for line in lines.slice(1)
+
+        markdown = swig.renderFile( options.markdown_template, data )
+
+        # Remove 3 or more blank lines in a row
+        markdown = markdown.replace( /(\n\n\n\n+)/g, "\n\n" )
+
+        console.log markdown
 
 switch command
     when "express"
         for file in files
-            console.info "Processing #{file}..."
+            console.info "Processing #{file}"
             cd = new CoffeeDoc.ExpressDoc(file)
-            console.log JSON.stringify cd.endpoints, null, 4
+            d = cd.data()
+            addData d
+
+        doData()
+        console.log JSON.stringify( data, null, 4 )
     else
         # Help
-        console.log """
-coffeedoc
----
-CoffeeScript + Documentation + Markdown = <3
-
-Usage:
-
-* coffeedoc express [coffeescript files]
-  This command produces API documentation based on express methods
-  and comments
-* coffeedoc classdoc [coffeescript files]
-  This command produces API documentation based on classes and
-  comments
-
-Options:
-
-* -markdown <filename>
-  Output a markdown file based on the data collected
-* -json <filename>
-  Output a JSON file based on the data collected
-"""
+        console.log fs.readFileSync( path.join __dirname, "..", "USAGE.md" ).toString()

@@ -34,15 +34,21 @@ class @ExpressDoc
 
                                 @addNode method, path, comment
 
+    data : () ->
+        return {
+            "endpoints" : @endpoints
+        }
+
     parseParam : (line) ->
         parts = line.split " "
         if (parts[2].charAt(0) == "{" && parts[2].charAt(parts[2].length-1) == "}")
             type = parts[2].substring(1, parts[2].length-1).toLowerCase()
 
+        name = parts[1]
         parts.splice 0, 2 + (1 if type)
 
         return {
-            name : parts[1],
+            name : name,
             type : type,
             description : parts.join " "
         }
