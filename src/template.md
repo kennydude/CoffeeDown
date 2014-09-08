@@ -1,12 +1,27 @@
-{% macro params(params) %}
+{#
+CoffeeDoc Markdown Template
+
+This file looks a bit of mess, but it's simply a template.
+
+If you're viewing this on Github.com, then it probably looks even worse,
+just use the raw view.
+
+Uses SWIG/Django syntax
+---
+
+Macro for defining parameters.
+
+Most parameters work the same, so DRY
+#}{% macro params(params) %}
 {% for param in params %}* `{{ param.name }}` ({{param.type}}) {{ param.description | indentNL }}
 {% endfor %}
-{% endmacro %}
-{% for endpoint in endpoints %}## {{ endpoint.method }} {{ endpoint.path }}
+{% endmacro %}{#
+Main Contents
+#}{% for endpoint in endpoints %}## {{ endpoint.method }} {{ endpoint.path }}
 
 {{ endpoint.description }}
 {% if endpoint.auth %}
-**Authentication:** {{ endpoint.auth.type }}{% if endpoint.auth.scope %}requiring scope {{ endpoint.auth.scope.join(", ") }}{% endif %}
+**Authentication:** {{ endpoint.auth.type }}{% if endpoint.auth.scope %} requiring scope {{ endpoint.auth.scope.join(", ") }}{% endif %}
 {% endif %}
 
 {% if endpoint.params.length > 0 %}

@@ -1,5 +1,5 @@
 {
-  "name": "coffeedoc",
+  "name": "coffeedown",
   "version": "0.0.1",
   "dependencies": {
     "ansi": "^0.3.0",
@@ -7,5 +7,7 @@
     "methods": "^1.1.0",
     "swig": "^1.4.2"
   },
-  "main": "src/CoffeeDoc.coffee"
+  "bin" : {
+      "coffeedown" : "./src/cli.js"
+  }
 }

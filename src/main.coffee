@@ -1,4 +1,4 @@
-CoffeeDoc = require "./CoffeeDoc"
+CoffeeDown = require "./CoffeeDown"
 Iterator = require "./Iterator" # TODO: Move to ext module
 ansi = require "ansi"
 fs = require "fs"
@@ -35,11 +35,11 @@ if command
     while (arg = args.next()) != null
         switch arg
             when "-m", "--markdown", "-markdown"
-                options.markdown = args.next()
+                options.markdown = path.join process.cwd(), args.next()
             when "-j", "--json", "-json"
-                option.json = args.next()
+                options.json = path.join process.cwd(), args.next()
             when "-mt", "--markdownTemplate", "-markdownTemplate"
-                options.markdown_template = args.next()
+                options.markdown_template = path.join process.cwd(), args.next()
             else
                 files.push arg
 
@@ -68,20 +68,22 @@ doData = () ->
         markdown = swig.renderFile( options.markdown_template, data )
 
         # Remove 3 or more blank lines in a row
-        markdown = markdown.replace( /(\n\n\n\n+)/g, "\n\n" )
+        markdown = markdown.replace( /(\n\n\n+)/g, "\n\n" )
 
-        console.log markdown
+        fs.writeFileSync options.markdown, markdown
+    if options.json
+        console.info "Outputting JSON to #{options.json}"
+        fs.writeFileSync options.json, JSON.stringify(data)
 
 switch command
     when "express"
         for file in files
             console.info "Processing #{file}"
-            cd = new CoffeeDoc.ExpressDoc(file)
+            cd = new CoffeeDown.ExpressDoc(file)
             d = cd.data()
             addData d
 
         doData()
-        console.log JSON.stringify( data, null, 4 )
     else
         # Help
         console.log fs.readFileSync( path.join __dirname, "..", "USAGE.md" ).toString()

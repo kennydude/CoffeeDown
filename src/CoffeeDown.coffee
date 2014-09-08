@@ -14,7 +14,7 @@ if typeof String.prototype.startsWith != 'function'
 class @ExpressDoc
     constructor: (file) ->
         @endpoints = []
-        nodes = CoffeeScript.nodes( fs.readFileSync(__dirname+"/test.coffee").toString(), {})
+        nodes = CoffeeScript.nodes( fs.readFileSync(file).toString(), {})
 
         # This is done this way due to needing to backtrack!
         for attr in nodes.children when nodes[attr]

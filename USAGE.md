@@ -1,13 +1,13 @@
-coffeedoc
+coffeedown
 ---
-CoffeeScript + Documentation + Markdown = <3
+CoffeeDown + Documentation + Markdown = <3
 
 Usage:
 
-* coffeedoc express [coffeescript files]
+* coffeedown express [coffeescript files]
   This command produces API documentation based on express methods
   and comments
-* coffeedoc classdoc [coffeescript files]
+* coffeedown classdoc [coffeescript files]
   This command produces API documentation based on classes and
   comments
 
