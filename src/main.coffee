@@ -23,6 +23,12 @@ console.info = (msg) ->
     cursor.green().write("[INFO] ")
     cursor.reset().write(msg + "\n")
 
+relative = (f) ->
+    if f == "-"
+        return f
+    else
+        return path.join process.cwd(),f
+
 if command
 
     files = []
@@ -35,11 +41,11 @@ if command
     while (arg = args.next()) != null
         switch arg
             when "-m", "--markdown", "-markdown"
-                options.markdown = path.join process.cwd(), args.next()
+                options.markdown = relative args.next()
             when "-j", "--json", "-json"
-                options.json = path.join process.cwd(), args.next()
+                options.json = relative args.next()
             when "-mt", "--markdownTemplate", "-markdownTemplate"
-                options.markdown_template = path.join process.cwd(), args.next()
+                options.markdown_template =relative args.next()
             else
                 files.push arg
 
@@ -53,6 +59,12 @@ addData = (d) ->
                 data[key].push item
         else
             console.warn "Unknown Error: #{k} is invalid"
+
+doFile = (filename, contents) ->
+    if filename == "-"
+        console.log contents
+    else
+        fs.writeFileSync filename, contents
 
 doData = () ->
     console.info "Finishing processing"
@@ -70,10 +82,10 @@ doData = () ->
         # Remove 3 or more blank lines in a row
         markdown = markdown.replace( /(\n\n\n+)/g, "\n\n" )
 
-        fs.writeFileSync options.markdown, markdown
+        doFile options.markdown, markdown
     if options.json
         console.info "Outputting JSON to #{options.json}"
-        fs.writeFileSync options.json, JSON.stringify(data)
+        doFile options.json, JSON.stringify(data)
 
 switch command
     when "express"

@@ -15,7 +15,9 @@ class @ExpressDoc
     constructor: (file) ->
         @endpoints = []
         nodes = CoffeeScript.nodes( fs.readFileSync(file).toString(), {})
+        @visitNode(nodes)
 
+    visitNode : (nodes) ->
         # This is done this way due to needing to backtrack!
         for attr in nodes.children when nodes[attr]
             allNodes = flatten [nodes[attr]]
@@ -23,16 +25,22 @@ class @ExpressDoc
 
                 if node instanceof CoffeeScript.Nodes.Call
                     # Check if it was an app.x method
-                    if verbs.indexOf(node.variable.properties[0].name.value) != -1 && node.variable.base.value == "app"
+                    if node.variable?.properties[0]?.name?.value?
+                        if verbs.indexOf(node.variable.properties[0].name.value) != -1 && node.variable.base.value == "app"
 
-                        if k-1 > 0
-                            prevNode = allNodes[k-1]
-                            if prevNode instanceof CoffeeScript.Nodes.Comment
-                                method = node.variable.properties[0].name.value
-                                comment = prevNode.comment.trim()
-                                path = JSON.parse(node.args[0].base.value)
+                            if k-1 >= 0
+                                prevNode = allNodes[k-1]
+                                if prevNode instanceof CoffeeScript.Nodes.Comment
+                                    method = node.variable.properties[0].name.value
+                                    comment = prevNode.comment.trim()
+                                    path = JSON.parse(node.args[0].base.value)
 
-                                @addNode method, path, comment
+                                    @addNode method, path, comment
+                                    console.log "addnode"
+                                    continue
+
+                if node["children"]
+                    @visitNode(node)
 
     data : () ->
         return {

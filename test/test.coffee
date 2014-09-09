@@ -27,3 +27,14 @@ POST MY API
 ###
 app.post "/egg", (req, res) ->
     res.end "todo"
+
+module.exports = (app) ->
+
+    ###
+    Test Indented API
+    @body pie1 {String} Pie ID
+    @body pie2 {String} Pie ID
+        i dk
+    ###
+    app.post "/poop", (req, res) ->
+        res.end "todo"
