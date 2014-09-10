@@ -1,13 +1,14 @@
 {
   "name": "coffeedown",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "dependencies": {
     "ansi": "^0.3.0",
     "coffee-script": "^1.8.0",
+    "iteratorjs": "0.0.1",
     "methods": "^1.1.0",
     "swig": "^1.4.2"
   },
-  "bin" : {
-      "coffeedown" : "./src/cli.js"
+  "bin": {
+    "coffeedown": "./src/cli.js"
   }
 }

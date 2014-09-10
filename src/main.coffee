@@ -1,5 +1,5 @@
 CoffeeDown = require "./CoffeeDown"
-Iterator = require "./Iterator" # TODO: Move to ext module
+Iterator = require "iteratorjs"
 ansi = require "ansi"
 fs = require "fs"
 path = require "path"

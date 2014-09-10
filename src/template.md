@@ -13,21 +13,21 @@ Macro for defining parameters.
 
 Most parameters work the same, so DRY
 #}{% macro params(params) %}
-{% for param in params %}* `{{ param.name }}` ({{param.type}}) {{ param.description | indentNL }}
+{% for param in params %}* `{{ param.name }}` ({{param.type}}) {{ param.description | indentNL | raw }}
 {% endfor %}
 {% endmacro %}{#
 Main Contents
-#}{% for endpoint in endpoints %}## {{ endpoint.method }} {{ endpoint.path }}
+#}{% for endpoint in endpoints %}## {{ endpoint.method | raw }} {{ endpoint.path | raw }}
 
-{{ endpoint.description }}
+{{ endpoint.description | raw }}
 {% if endpoint.auth %}
-**Authentication:** {{ endpoint.auth.type }}{% if endpoint.auth.scope %} requiring scope {{ endpoint.auth.scope.join(", ") }}{% endif %}
+**Authentication:** {{ endpoint.auth.type | raw }}{% if endpoint.auth.scope %} requiring scope {{ endpoint.auth.scope.join(", ") | raw }}{% endif %}
 {% endif %}
 
 {% if endpoint.params.length > 0 %}
 ### URL Parameters
 
-{{ params(endpoint.query_string) }}
+{{ params(endpoint.params) }}
 {% endif %}
 
 {% if endpoint.query_string.length > 0 %}
